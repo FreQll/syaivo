@@ -1,0 +1,58 @@
+{
+  "name": "syaivo",
+  "version": "0.1.0",
+  "description": "Framework-agnostic animated background engine for modern SaaS",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js",
+      "require": "./dist/react.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "concurrently \"tsup --watch\" \"npm --prefix demo run dev\"",
+    "dev:lib": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx"
+  },
+  "keywords": [
+    "background",
+    "animation",
+    "canvas",
+    "particles",
+    "waves",
+    "topography",
+    "saas",
+    "effects"
+  ],
+  "author": "Danylo Shchepin",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "concurrently": "^9.0.0",
+    "react": "^18.3.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  }
+}
