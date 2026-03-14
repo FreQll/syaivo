@@ -10,6 +10,7 @@ import { createTopography, type TopographyOptions, type TopographyEffect } from 
 import { createWaves, type WavesOptions, type WavesEffect } from "../effects/waves.js";
 import { createParticles, type ParticlesOptions, type ParticlesEffect } from "../effects/particles.js";
 import { createGlyphs, type GlyphsOptions, type GlyphsEffect } from "../effects/glyphs.js";
+import { createAurora, type AuroraOptions, type AuroraEffect } from "../effects/aurora.js";
 import type { BackgroundEffect } from "../core/types.js";
 
 // ---------------------------------------------------------------------------
@@ -151,6 +152,30 @@ export function Glyphs({ style, effectRef, ...props }: GlyphsProps) {
   };
 
   const ref = useBackgroundEffect(createGlyphs, opts, effectRef);
+  return <div ref={ref} style={{ ...FILL_STYLE, ...style }} {...divProps} />;
+}
+
+// ---------------------------------------------------------------------------
+// <Aurora />
+// ---------------------------------------------------------------------------
+
+export interface AuroraProps extends AuroraOptions, DivProps {
+  effectRef?: RefObject<AuroraEffect | null>;
+}
+
+export function Aurora({ style, effectRef, ...props }: AuroraProps) {
+  const {
+    colors, backgroundColor, curtains, waveAmplitude, curtainWidth,
+    speed, opacity, scanlines, animated, respectReducedMotion,
+    ...divProps
+  } = props;
+
+  const opts: AuroraOptions = {
+    colors, backgroundColor, curtains, waveAmplitude, curtainWidth,
+    speed, opacity, scanlines, animated, respectReducedMotion,
+  };
+
+  const ref = useBackgroundEffect(createAurora, opts, effectRef);
   return <div ref={ref} style={{ ...FILL_STYLE, ...style }} {...divProps} />;
 }
 
