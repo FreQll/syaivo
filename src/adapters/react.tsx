@@ -18,6 +18,14 @@ import type { BackgroundEffect } from "../core/types.js";
 // Shared hook
 // ---------------------------------------------------------------------------
 
+function stripUndefined<T extends Record<string, unknown>>(obj: T): T {
+  const clean = {} as T;
+  for (const key in obj) {
+    if (obj[key] !== undefined) clean[key] = obj[key];
+  }
+  return clean;
+}
+
 function useBackgroundEffect<TEffect extends BackgroundEffect, TOpts>(
   factory: (opts: TOpts) => TEffect,
   options: TOpts,
@@ -25,7 +33,7 @@ function useBackgroundEffect<TEffect extends BackgroundEffect, TOpts>(
 ): React.RefObject<HTMLDivElement> {
   const ref = useRef<HTMLDivElement>(null);
   const optsRef = useRef(options);
-  optsRef.current = options;
+  optsRef.current = stripUndefined(options as Record<string, unknown>) as TOpts;
 
   useEffect(() => {
     const el = ref.current;
