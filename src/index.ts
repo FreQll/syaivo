@@ -17,6 +17,9 @@ export type { GlyphsOptions, GlyphsEffect } from "./effects/glyphs.js";
 export { createAurora } from "./effects/aurora.js";
 export type { AuroraOptions, AuroraEffect } from "./effects/aurora.js";
 
+export { createMeshGradient } from "./effects/mesh.js";
+export type { MeshGradientOptions, MeshGradientEffect } from "./effects/mesh.js";
+
 // Utilities
 export { prefersReducedMotion } from "./core/reducedMotion.js";
 export { simplex2, simplex3, fbm, fbm3 } from "./core/noise.js";

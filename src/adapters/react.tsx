@@ -11,6 +11,7 @@ import { createWaves, type WavesOptions, type WavesEffect } from "../effects/wav
 import { createParticles, type ParticlesOptions, type ParticlesEffect } from "../effects/particles.js";
 import { createGlyphs, type GlyphsOptions, type GlyphsEffect } from "../effects/glyphs.js";
 import { createAurora, type AuroraOptions, type AuroraEffect } from "../effects/aurora.js";
+import { createMeshGradient, type MeshGradientOptions, type MeshGradientEffect } from "../effects/mesh.js";
 import type { BackgroundEffect } from "../core/types.js";
 
 // ---------------------------------------------------------------------------
@@ -176,6 +177,30 @@ export function Aurora({ style, effectRef, ...props }: AuroraProps) {
   };
 
   const ref = useBackgroundEffect(createAurora, opts, effectRef);
+  return <div ref={ref} style={{ ...FILL_STYLE, ...style }} {...divProps} />;
+}
+
+// ---------------------------------------------------------------------------
+// <MeshGradient />
+// ---------------------------------------------------------------------------
+
+export interface MeshGradientProps extends MeshGradientOptions, DivProps {
+  effectRef?: RefObject<MeshGradientEffect | null>;
+}
+
+export function MeshGradient({ style, effectRef, ...props }: MeshGradientProps) {
+  const {
+    colors, backgroundColor, points, distortion,
+    speed, animated, respectReducedMotion,
+    ...divProps
+  } = props;
+
+  const opts: MeshGradientOptions = {
+    colors, backgroundColor, points, distortion,
+    speed, animated, respectReducedMotion,
+  };
+
+  const ref = useBackgroundEffect(createMeshGradient, opts, effectRef);
   return <div ref={ref} style={{ ...FILL_STYLE, ...style }} {...divProps} />;
 }
 

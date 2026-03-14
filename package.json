@@ -43,6 +43,7 @@
     "effects"
   ],
   "author": "Danylo Shchepin",
+  "homepage": "https://syaivo.vercel.app/",
   "license": "MIT",
   "devDependencies": {
     "@types/react": "^18.3.0",
