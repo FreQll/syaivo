@@ -3,3 +3,4 @@ dist/
 demo/
 *.tsbuildinfo
 .DS_Store
+.claude

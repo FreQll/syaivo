@@ -9,6 +9,7 @@ import { useEffect, useRef, type CSSProperties, type HTMLAttributes, type RefObj
 import { createTopography, type TopographyOptions, type TopographyEffect } from "../effects/topography.js";
 import { createWaves, type WavesOptions, type WavesEffect } from "../effects/waves.js";
 import { createParticles, type ParticlesOptions, type ParticlesEffect } from "../effects/particles.js";
+import { createGlyphs, type GlyphsOptions, type GlyphsEffect } from "../effects/glyphs.js";
 import type { BackgroundEffect } from "../core/types.js";
 
 // ---------------------------------------------------------------------------
@@ -124,6 +125,32 @@ export function Particles({ style, effectRef, ...props }: ParticlesProps) {
   };
 
   const ref = useBackgroundEffect(createParticles, opts, effectRef);
+  return <div ref={ref} style={{ ...FILL_STYLE, ...style }} {...divProps} />;
+}
+
+// ---------------------------------------------------------------------------
+// <Glyphs />
+// ---------------------------------------------------------------------------
+
+export interface GlyphsProps extends GlyphsOptions, DivProps {
+  effectRef?: RefObject<GlyphsEffect | null>;
+}
+
+export function Glyphs({ style, effectRef, ...props }: GlyphsProps) {
+  const {
+    charset, color, backgroundColor, count, minSpeed, maxSpeed,
+    minOpacity, maxOpacity, fontSize, fontFamily,
+    minFlickerInterval, maxFlickerInterval, animated, respectReducedMotion,
+    ...divProps
+  } = props;
+
+  const opts: GlyphsOptions = {
+    charset, color, backgroundColor, count, minSpeed, maxSpeed,
+    minOpacity, maxOpacity, fontSize, fontFamily,
+    minFlickerInterval, maxFlickerInterval, animated, respectReducedMotion,
+  };
+
+  const ref = useBackgroundEffect(createGlyphs, opts, effectRef);
   return <div ref={ref} style={{ ...FILL_STYLE, ...style }} {...divProps} />;
 }
 
