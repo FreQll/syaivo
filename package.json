@@ -28,6 +28,10 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FreQll/syaivo"
+  },
   "keywords": [
     "background",
     "animation",
