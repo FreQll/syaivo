@@ -226,11 +226,36 @@ export function createDitherWarp(options: DitherWarpOptions = {}): DitherWarpEff
   let cleanupMotion: (() => void) | null = null;
   let fg: RGB = parseColor(opts.colorFront);
   let bg: RGB = parseColor(opts.colorBack);
+  let fgPacked = 0;
+  let bgPacked = 0;
   let time = 0;
+
+  // Offscreen canvas at cell resolution (1px per dither cell)
+  let offscreen: HTMLCanvasElement | null = null;
+  let offCtx: CanvasRenderingContext2D | null = null;
+  let imgData: ImageData | null = null;
+  let buf32: Uint32Array | null = null;
+
+  function packRGB(c: RGB): number {
+    return (255 << 24) | (c.b << 16) | (c.g << 8) | c.r;
+  }
 
   function rebuildColors(): void {
     fg = parseColor(opts.colorFront);
     bg = parseColor(opts.colorBack);
+    fgPacked = packRGB(fg);
+    bgPacked = packRGB(bg);
+  }
+
+  function ensureOffscreen(cols: number, rows: number): void {
+    if (!offscreen || offscreen.width !== cols || offscreen.height !== rows) {
+      offscreen = document.createElement("canvas");
+      offscreen.width = cols;
+      offscreen.height = rows;
+      offCtx = offscreen.getContext("2d")!;
+      imgData = offCtx.createImageData(cols, rows);
+      buf32 = new Uint32Array(imgData.data.buffer);
+    }
   }
 
   function isMotionDisabled(): boolean {
@@ -252,67 +277,52 @@ export function createDitherWarp(options: DitherWarpOptions = {}): DitherWarpEff
 
   function drawFrame(): void {
     if (!canvasHandle) return;
-    const { ctx, canvas, width, height } = canvasHandle;
+    const { ctx, width, height } = canvasHandle;
 
     const ps = opts.pixelSize;
     const cols = Math.ceil(width / ps);
     const rows = Math.ceil(height / ps);
     const t = time * 0.5;
     const scale = opts.scale;
+    const shape = opts.shape;
+    const radial = shape === "ripple" || shape === "swirl" || shape === "sphere";
+    const invH = 1 / height;
 
-    const imgData = ctx.createImageData(canvas.width, canvas.height);
-    const data = imgData.data;
-    const dpr = window.devicePixelRatio || 1;
+    ensureOffscreen(cols, rows);
+    if (!offCtx || !imgData || !buf32) return;
 
-    // Normalized center for shapes that need it
+    const pixels = buf32;
+    const fgP = fgPacked;
+    const bgP = bgPacked;
+
+    // Center in canvas coords
     const cxN = width * 0.5;
     const cyN = height * 0.5;
 
     for (let row = 0; row < rows; row++) {
+      const py = (row + 0.5) * ps;
+      const ny = (py - cyN) * invH;
+      const rowOff = row * cols;
+
       for (let col = 0; col < cols; col++) {
-        // Pixelated UV: snap to grid center
         const px = (col + 0.5) * ps;
-        const py = (row + 0.5) * ps;
 
-        // Normalized UV relative to center (for radial shapes)
-        // For non-radial shapes, use raw pixel coords like the shader
-        const nx = px - cxN;
-        const ny = py - cyN;
-
-        const shape = opts.shape;
         let shapeVal: number;
-
-        // Radial shapes use normalized coords, pattern shapes use pixel coords
-        if (shape === "ripple" || shape === "swirl" || shape === "sphere") {
-          const aspect = width / height;
-          shapeVal = computeShape(shape, nx / height, ny / height, t, scale);
+        if (radial) {
+          shapeVal = computeShape(shape, (px - cxN) * invH, ny, t, scale);
         } else {
           shapeVal = computeShape(shape, px, py, t, scale);
         }
 
-        const res = getDithering(col, row, shapeVal);
-        const pick = res ? fg : bg;
-
-        // Fill block
-        const pxStart = Math.round(col * ps * dpr);
-        const pyStart = Math.round(row * ps * dpr);
-        const pxEnd = Math.min(Math.round((col + 1) * ps * dpr), canvas.width);
-        const pyEnd = Math.min(Math.round((row + 1) * ps * dpr), canvas.height);
-        const canvasW = canvas.width;
-
-        for (let fy = pyStart; fy < pyEnd; fy++) {
-          for (let fx = pxStart; fx < pxEnd; fx++) {
-            const i = (fy * canvasW + fx) * 4;
-            data[i] = pick.r;
-            data[i + 1] = pick.g;
-            data[i + 2] = pick.b;
-            data[i + 3] = 255;
-          }
-        }
+        pixels[rowOff + col] = getDithering(col, row, shapeVal) ? fgP : bgP;
       }
     }
 
-    ctx.putImageData(imgData, 0, 0);
+    offCtx.putImageData(imgData, 0, 0);
+
+    // Scale up with nearest-neighbor for crisp pixels
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(offscreen!, 0, 0, cols, rows, 0, 0, width, height);
   }
 
   return {
@@ -354,6 +364,10 @@ export function createDitherWarp(options: DitherWarpOptions = {}): DitherWarpEff
       loop = null;
       canvasHandle = null;
       cleanupMotion = null;
+      offscreen = null;
+      offCtx = null;
+      imgData = null;
+      buf32 = null;
     },
 
     resize(_w: number, _h: number) {
