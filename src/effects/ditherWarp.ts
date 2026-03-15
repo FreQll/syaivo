@@ -275,6 +275,12 @@ export function createDitherWarp(options: DitherWarpOptions = {}): DitherWarpEff
     }
   }
 
+  // Coarse grid step — shape is computed every STEP cells, rest is interpolated
+  const STEP = 4;
+
+  // Reusable coarse grid buffer
+  let coarseGrid: Float32Array | null = null;
+
   function drawFrame(): void {
     if (!canvasHandle) return;
     const { ctx, width, height } = canvasHandle;
@@ -295,24 +301,55 @@ export function createDitherWarp(options: DitherWarpOptions = {}): DitherWarpEff
     const fgP = fgPacked;
     const bgP = bgPacked;
 
-    // Center in canvas coords
     const cxN = width * 0.5;
     const cyN = height * 0.5;
 
-    for (let row = 0; row < rows; row++) {
+    // ── Step 1: compute shape on coarse grid ────────────────────────────
+    const cCols = Math.ceil(cols / STEP) + 1;
+    const cRows = Math.ceil(rows / STEP) + 1;
+    const cSize = cCols * cRows;
+
+    if (!coarseGrid || coarseGrid.length < cSize) {
+      coarseGrid = new Float32Array(cSize);
+    }
+
+    for (let cr = 0; cr < cRows; cr++) {
+      const row = cr * STEP;
       const py = (row + 0.5) * ps;
       const ny = (py - cyN) * invH;
+      const cOff = cr * cCols;
+
+      for (let cc = 0; cc < cCols; cc++) {
+        const col = cc * STEP;
+        const px = (col + 0.5) * ps;
+
+        if (radial) {
+          coarseGrid[cOff + cc] = computeShape(shape, (px - cxN) * invH, ny, t, scale);
+        } else {
+          coarseGrid[cOff + cc] = computeShape(shape, px, py, t, scale);
+        }
+      }
+    }
+
+    // ── Step 2: interpolate + dither at full cell resolution ─────────────
+    const invStep = 1 / STEP;
+
+    for (let row = 0; row < rows; row++) {
+      const cr = (row * invStep) | 0;
+      const fy = row * invStep - cr;
+      const cr0 = cr * cCols;
+      const cr1 = Math.min(cr + 1, cRows - 1) * cCols;
       const rowOff = row * cols;
 
       for (let col = 0; col < cols; col++) {
-        const px = (col + 0.5) * ps;
+        const cc = (col * invStep) | 0;
+        const fx = col * invStep - cc;
+        const cc1 = Math.min(cc + 1, cCols - 1);
 
-        let shapeVal: number;
-        if (radial) {
-          shapeVal = computeShape(shape, (px - cxN) * invH, ny, t, scale);
-        } else {
-          shapeVal = computeShape(shape, px, py, t, scale);
-        }
+        // Bilinear interpolation
+        const top = coarseGrid[cr0 + cc] + (coarseGrid[cr0 + cc1] - coarseGrid[cr0 + cc]) * fx;
+        const bot = coarseGrid[cr1 + cc] + (coarseGrid[cr1 + cc1] - coarseGrid[cr1 + cc]) * fx;
+        const shapeVal = top + (bot - top) * fy;
 
         pixels[rowOff + col] = getDithering(col, row, shapeVal) ? fgP : bgP;
       }
