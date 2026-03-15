@@ -14,6 +14,7 @@ import { createAurora, type AuroraOptions, type AuroraEffect } from "../effects/
 import { createMeshGradient, type MeshGradientOptions, type MeshGradientEffect } from "../effects/mesh.js";
 import { createDither, type DitherOptions, type DitherEffect } from "../effects/dither.js";
 import { createHyperJump, type HyperJumpOptions, type HyperJumpEffect } from "../effects/hyperJump.js";
+import { createCyberGrid, type CyberGridOptions, type CyberGridEffect } from "../effects/cyberGrid.js";
 import type { BackgroundEffect } from "../core/types.js";
 
 // ---------------------------------------------------------------------------
@@ -259,5 +260,29 @@ export function HyperJump({ style, effectRef, ...props }: HyperJumpProps) {
   };
 
   const ref = useBackgroundEffect(createHyperJump, opts, effectRef);
+  return <div ref={ref} style={{ ...FILL_STYLE, ...style }} {...divProps} />;
+}
+
+// ---------------------------------------------------------------------------
+// <CyberGrid />
+// ---------------------------------------------------------------------------
+
+export interface CyberGridProps extends CyberGridOptions, DivProps {
+  effectRef?: RefObject<CyberGridEffect | null>;
+}
+
+export function CyberGrid({ style, effectRef, ...props }: CyberGridProps) {
+  const {
+    gridColor, backgroundColor, intensity, anchor, fov,
+    speed, floorMode, lineWidth, pixelated, animated, respectReducedMotion,
+    ...divProps
+  } = props;
+
+  const opts: CyberGridOptions = {
+    gridColor, backgroundColor, intensity, anchor, fov,
+    speed, floorMode, lineWidth, pixelated, animated, respectReducedMotion,
+  };
+
+  const ref = useBackgroundEffect(createCyberGrid, opts, effectRef);
   return <div ref={ref} style={{ ...FILL_STYLE, ...style }} {...divProps} />;
 }
