@@ -22,6 +22,8 @@ export interface WavesOptions {
   lineWidth?: number;
   /** Enable animation. Default: true */
   animated?: boolean;
+  /** Add extra harmonics to break wave symmetry. Default: false */
+  harmonics?: boolean;
   /** Respect prefers-reduced-motion. Default: true */
   respectReducedMotion?: boolean;
 }
@@ -39,9 +41,16 @@ const DEFAULTS: Required<WavesOptions> = {
   speed: 1,
   filled: true,
   lineWidth: 2,
+  harmonics: false,
   animated: true,
   respectReducedMotion: true,
 };
+
+interface WaveHarmonic {
+  freqMult: number;
+  ampMult: number;
+  phaseMult: number;
+}
 
 interface WaveLayer {
   phase: number;
@@ -53,6 +62,8 @@ interface WaveLayer {
   speedMult: number;
   /** Per-layer amplitude multiplier. */
   ampMult: number;
+  /** Extra harmonics to break symmetry. */
+  harmonics: WaveHarmonic[];
 }
 
 export interface WavesEffect extends BackgroundEffect {
@@ -74,6 +85,12 @@ export function createWaves(options: WavesOptions = {}): WavesEffect {
       freqMult: 1 + i * 0.3,
       speedMult: 1 - i * 0.15,
       ampMult: 1 - i * 0.2,
+      harmonics: opts.harmonics
+        ? [
+            { freqMult: 2.1 + i * 0.4, ampMult: 0.3, phaseMult: 1.3 + i * 0.2 },
+            { freqMult: 3.7 + i * 0.6, ampMult: 0.12, phaseMult: 0.7 + i * 0.3 },
+          ]
+        : [],
     }));
   }
 
@@ -106,7 +123,10 @@ export function createWaves(options: WavesOptions = {}): WavesEffect {
       ctx.moveTo(0, height);
 
       for (let x = 0; x <= width; x += 2) {
-        const y = baseY + Math.sin(x * freq + lyr.phase) * amp;
+        let y = baseY + Math.sin(x * freq + lyr.phase) * amp;
+        for (const h of lyr.harmonics) {
+          y += Math.sin(x * freq * h.freqMult + lyr.phase * h.phaseMult) * amp * h.ampMult;
+        }
         ctx.lineTo(x, y);
       }
 

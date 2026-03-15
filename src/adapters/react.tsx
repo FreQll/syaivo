@@ -12,6 +12,7 @@ import { createParticles, type ParticlesOptions, type ParticlesEffect } from "..
 import { createGlyphs, type GlyphsOptions, type GlyphsEffect } from "../effects/glyphs.js";
 import { createAurora, type AuroraOptions, type AuroraEffect } from "../effects/aurora.js";
 import { createMeshGradient, type MeshGradientOptions, type MeshGradientEffect } from "../effects/mesh.js";
+import { createDither, type DitherOptions, type DitherEffect } from "../effects/dither.js";
 import type { BackgroundEffect } from "../core/types.js";
 
 // ---------------------------------------------------------------------------
@@ -101,13 +102,13 @@ export interface WavesProps extends WavesOptions, DivProps {
 export function Waves({ style, effectRef, ...props }: WavesProps) {
   const {
     colors, backgroundColor, layers, amplitude, frequency,
-    speed, filled, lineWidth, animated, respectReducedMotion,
+    speed, filled, lineWidth, harmonics, animated, respectReducedMotion,
     ...divProps
   } = props;
 
   const opts: WavesOptions = {
     colors, backgroundColor, layers, amplitude, frequency,
-    speed, filled, lineWidth, animated, respectReducedMotion,
+    speed, filled, lineWidth, harmonics, animated, respectReducedMotion,
   };
 
   const ref = useBackgroundEffect(createWaves, opts, effectRef);
@@ -211,4 +212,29 @@ export function MeshGradient({ style, effectRef, ...props }: MeshGradientProps) 
   const ref = useBackgroundEffect(createMeshGradient, opts, effectRef);
   return <div ref={ref} style={{ ...FILL_STYLE, ...style }} {...divProps} />;
 }
+
+// ---------------------------------------------------------------------------
+// <Dither />
+// ---------------------------------------------------------------------------
+
+export interface DitherProps extends DitherOptions, DivProps {
+  effectRef?: RefObject<DitherEffect | null>;
+}
+
+export function Dither({ style, effectRef, ...props }: DitherProps) {
+  const {
+    colors, backgroundColor, pixelSize, pattern, angle,
+    noiseIntensity, speed, animated, respectReducedMotion,
+    ...divProps
+  } = props;
+
+  const opts: DitherOptions = {
+    colors, backgroundColor, pixelSize, pattern, angle,
+    noiseIntensity, speed, animated, respectReducedMotion,
+  };
+
+  const ref = useBackgroundEffect(createDither, opts, effectRef);
+  return <div ref={ref} style={{ ...FILL_STYLE, ...style }} {...divProps} />;
+}
+
 
