@@ -15,6 +15,7 @@ import { createMeshGradient, type MeshGradientOptions, type MeshGradientEffect }
 import { createDither, type DitherOptions, type DitherEffect } from "../effects/dither.js";
 import { createHyperJump, type HyperJumpOptions, type HyperJumpEffect } from "../effects/hyperJump.js";
 import { createCyberGrid, type CyberGridOptions, type CyberGridEffect } from "../effects/cyberGrid.js";
+import { createDitherWarp, type DitherWarpOptions, type DitherWarpEffect } from "../effects/ditherWarp.js";
 import type { BackgroundEffect } from "../core/types.js";
 
 // ---------------------------------------------------------------------------
@@ -284,5 +285,29 @@ export function CyberGrid({ style, effectRef, ...props }: CyberGridProps) {
   };
 
   const ref = useBackgroundEffect(createCyberGrid, opts, effectRef);
+  return <div ref={ref} style={{ ...FILL_STYLE, ...style }} {...divProps} />;
+}
+
+// ---------------------------------------------------------------------------
+// <DitherWarp />
+// ---------------------------------------------------------------------------
+
+export interface DitherWarpProps extends DitherWarpOptions, DivProps {
+  effectRef?: RefObject<DitherWarpEffect | null>;
+}
+
+export function DitherWarp({ style, effectRef, ...props }: DitherWarpProps) {
+  const {
+    colorFront, colorBack, shape, pattern, pixelSize,
+    scale, speed, animated, respectReducedMotion,
+    ...divProps
+  } = props;
+
+  const opts: DitherWarpOptions = {
+    colorFront, colorBack, shape, pattern, pixelSize,
+    scale, speed, animated, respectReducedMotion,
+  };
+
+  const ref = useBackgroundEffect(createDitherWarp, opts, effectRef);
   return <div ref={ref} style={{ ...FILL_STYLE, ...style }} {...divProps} />;
 }

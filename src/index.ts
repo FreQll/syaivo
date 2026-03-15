@@ -29,6 +29,10 @@ export type { HyperJumpOptions, HyperJumpEffect } from "./effects/hyperJump.js";
 export { createCyberGrid } from "./effects/cyberGrid.js";
 export type { CyberGridOptions, CyberGridEffect } from "./effects/cyberGrid.js";
 
+export { createDitherWarp } from "./effects/ditherWarp.js";
+export type { DitherWarpOptions, DitherWarpEffect } from "./effects/ditherWarp.js";
+export type { DitherWarpShape, DitherWarpPattern } from "./effects/ditherWarp.js";
+
 // Utilities
 export { prefersReducedMotion } from "./core/reducedMotion.js";
 export { simplex2, simplex3, fbm, fbm3 } from "./core/noise.js";
