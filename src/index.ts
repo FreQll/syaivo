@@ -23,6 +23,9 @@ export type { MeshGradientOptions, MeshGradientEffect } from "./effects/mesh.js"
 export { createDither } from "./effects/dither.js";
 export type { DitherOptions, DitherEffect } from "./effects/dither.js";
 
+export { createHyperJump } from "./effects/hyperJump.js";
+export type { HyperJumpOptions, HyperJumpEffect } from "./effects/hyperJump.js";
+
 // Utilities
 export { prefersReducedMotion } from "./core/reducedMotion.js";
 export { simplex2, simplex3, fbm, fbm3 } from "./core/noise.js";
