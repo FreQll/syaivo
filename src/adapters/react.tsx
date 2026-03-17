@@ -16,6 +16,7 @@ import { createDither, type DitherOptions, type DitherEffect } from "../effects/
 import { createHyperJump, type HyperJumpOptions, type HyperJumpEffect } from "../effects/hyperJump.js";
 import { createCyberGrid, type CyberGridOptions, type CyberGridEffect } from "../effects/cyberGrid.js";
 import { createDitherWarp, type DitherWarpOptions, type DitherWarpEffect } from "../effects/ditherWarp.js";
+import { createLumina, type LuminaOptions, type LuminaEffect } from "../effects/lumina.js";
 import type { BackgroundEffect } from "../core/types.js";
 
 // ---------------------------------------------------------------------------
@@ -309,5 +310,29 @@ export function DitherWarp({ style, effectRef, ...props }: DitherWarpProps) {
   };
 
   const ref = useBackgroundEffect(createDitherWarp, opts, effectRef);
+  return <div ref={ref} style={{ ...FILL_STYLE, ...style }} {...divProps} />;
+}
+
+// ---------------------------------------------------------------------------
+// <Lumina />
+// ---------------------------------------------------------------------------
+
+export interface LuminaProps extends LuminaOptions, DivProps {
+  effectRef?: RefObject<LuminaEffect | null>;
+}
+
+export function Lumina({ style, effectRef, ...props }: LuminaProps) {
+  const {
+    backgroundColor, beamColor, beams, angle, intensity, softness,
+    grain, grainSpeed, beamSpeed, speed, animated, respectReducedMotion,
+    ...divProps
+  } = props;
+
+  const opts: LuminaOptions = {
+    backgroundColor, beamColor, beams, angle, intensity, softness,
+    grain, grainSpeed, beamSpeed, speed, animated, respectReducedMotion,
+  };
+
+  const ref = useBackgroundEffect(createLumina, opts, effectRef);
   return <div ref={ref} style={{ ...FILL_STYLE, ...style }} {...divProps} />;
 }

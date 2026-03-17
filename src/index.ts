@@ -33,6 +33,9 @@ export { createDitherWarp } from "./effects/ditherWarp.js";
 export type { DitherWarpOptions, DitherWarpEffect } from "./effects/ditherWarp.js";
 export type { DitherWarpShape, DitherWarpPattern } from "./effects/ditherWarp.js";
 
+export { createLumina } from "./effects/lumina.js";
+export type { LuminaOptions, LuminaEffect } from "./effects/lumina.js";
+
 // Utilities
 export { prefersReducedMotion } from "./core/reducedMotion.js";
 export { simplex2, simplex3, fbm, fbm3 } from "./core/noise.js";
