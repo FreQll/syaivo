@@ -36,6 +36,9 @@ export type { DitherWarpShape, DitherWarpPattern } from "./effects/ditherWarp.js
 export { createLumina } from "./effects/lumina.js";
 export type { LuminaOptions, LuminaEffect } from "./effects/lumina.js";
 
+export { createLiquidSilk } from "./effects/liquidSilk.js";
+export type { LiquidSilkOptions, LiquidSilkEffect } from "./effects/liquidSilk.js";
+
 // Utilities
 export { prefersReducedMotion } from "./core/reducedMotion.js";
 export { simplex2, simplex3, fbm, fbm3 } from "./core/noise.js";
