@@ -39,6 +39,9 @@ export type { LuminaOptions, LuminaEffect } from "./effects/lumina.js";
 export { createLiquidSilk } from "./effects/liquidSilk.js";
 export type { LiquidSilkOptions, LiquidSilkEffect } from "./effects/liquidSilk.js";
 
+export { createHalftone } from "./effects/halftone.js";
+export type { HalftoneOptions, HalftoneEffect } from "./effects/halftone.js";
+
 // Utilities
 export { prefersReducedMotion } from "./core/reducedMotion.js";
 export { simplex2, simplex3, fbm, fbm3 } from "./core/noise.js";

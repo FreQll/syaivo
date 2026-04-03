@@ -17,6 +17,7 @@ import { createHyperJump, type HyperJumpOptions, type HyperJumpEffect } from "..
 import { createCyberGrid, type CyberGridOptions, type CyberGridEffect } from "../effects/cyberGrid.js";
 import { createDitherWarp, type DitherWarpOptions, type DitherWarpEffect } from "../effects/ditherWarp.js";
 import { createLumina, type LuminaOptions, type LuminaEffect } from "../effects/lumina.js";
+import { createHalftone, type HalftoneOptions, type HalftoneEffect } from "../effects/halftone.js";
 import type { BackgroundEffect } from "../core/types.js";
 
 // ---------------------------------------------------------------------------
@@ -334,5 +335,35 @@ export function Lumina({ style, effectRef, ...props }: LuminaProps) {
   };
 
   const ref = useBackgroundEffect(createLumina, opts, effectRef);
+  return <div ref={ref} style={{ ...FILL_STYLE, ...style }} {...divProps} />;
+}
+
+// ---------------------------------------------------------------------------
+// <Halftone />
+// ---------------------------------------------------------------------------
+
+export interface HalftoneProps extends HalftoneOptions, DivProps {
+  effectRef?: RefObject<HalftoneEffect | null>;
+}
+
+export function Halftone({ style, effectRef, ...props }: HalftoneProps) {
+  const {
+    dotColor, colors, backgroundColor, pixelSize,
+    dotMin, dotMax, dotThreshold, contrast, invert,
+    angle, noiseIntensity, opacity,
+    animated, respectReducedMotion, speed,
+    waveFrequency, waveAmplitude, waveSpeed, ribbonWidth, ribbonSoftness,
+    ...divProps
+  } = props;
+
+  const opts: HalftoneOptions = {
+    dotColor, colors, backgroundColor, pixelSize,
+    dotMin, dotMax, dotThreshold, contrast, invert,
+    angle, noiseIntensity, opacity,
+    animated, respectReducedMotion, speed,
+    waveFrequency, waveAmplitude, waveSpeed, ribbonWidth, ribbonSoftness,
+  };
+
+  const ref = useBackgroundEffect(createHalftone, opts, effectRef);
   return <div ref={ref} style={{ ...FILL_STYLE, ...style }} {...divProps} />;
 }
