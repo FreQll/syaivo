@@ -181,14 +181,9 @@ export function createDither(options: DitherOptions = {}): DitherEffect {
         const threshold = getThreshold(col, row);
         const pick = frac > threshold ? c1 : c0;
 
-        // Blend with background at edges for vignette
-        const edgeX = Math.min(col, cols - 1 - col) / (cols * 0.15);
-        const edgeY = Math.min(row, rows - 1 - row) / (rows * 0.15);
-        const vignette = Math.min(1, edgeX) * Math.min(1, edgeY);
-
-        const r = pick.r * vignette + parsedBg.r * (1 - vignette);
-        const g = pick.g * vignette + parsedBg.g * (1 - vignette);
-        const b = pick.b * vignette + parsedBg.b * (1 - vignette);
+        const r = pick.r;
+        const g = pick.g;
+        const b = pick.b;
 
         // Fill the block in ImageData (accounting for DPR)
         const pxStart = Math.round(col * ps * dpr);
